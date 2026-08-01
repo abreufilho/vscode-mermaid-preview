@@ -73,7 +73,7 @@
     }
   },
   "scripts": {
-    "build": "esbuild src/extension.js --bundle --platform=node --external:vscode --outfile=extension.js --legal-comments=eof",
+    "build": "node scripts/build.mjs",
     "test": "node --test",
     "vscode:prepublish": "npm run build",
     "package": "vsce package"
