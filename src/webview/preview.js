@@ -1,4 +1,3 @@
-/* global mermaid, acquireVsCodeApi */
 const vscode = acquireVsCodeApi();
 
 let blocks = [];
@@ -11,16 +10,16 @@ let lastX = 0;
 let lastY = 0;
 
 const canvas = document.getElementById('canvas');
-const viewport = document.getElementById('viewport');
+const viewportEl = document.getElementById('viewport');
 const diagram = document.getElementById('diagram');
 const counter = document.getElementById('counter');
 const empty = document.getElementById('empty');
-const toolbar = document.getElementById('toolbar');
+const toolbarEl = document.getElementById('toolbar');
 const btnPrev = document.getElementById('btn-prev');
 const btnNext = document.getElementById('btn-next');
 
 function applyTransform() {
-  viewport.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+  viewportEl.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
 }
 
 function fitToScreen() {
@@ -194,13 +193,13 @@ window.addEventListener('message', async (event) => {
 
   if (!blocks.length) {
     empty.style.display = 'flex';
-    toolbar.style.display = 'none';
+    toolbarEl.style.display = 'none';
     canvas.style.display = 'none';
     return;
   }
 
   empty.style.display = 'none';
-  toolbar.style.display = 'flex';
+  toolbarEl.style.display = 'flex';
   canvas.style.display = 'flex';
   await renderCurrent();
 });

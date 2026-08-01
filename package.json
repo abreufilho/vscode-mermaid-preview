@@ -74,6 +74,8 @@
   },
   "scripts": {
     "build": "node scripts/build.mjs",
+    "lint": "eslint .",
+    "format:check": "prettier --check \"src/**/*.js\" \"scripts/*.mjs\" \"*.json\"",
     "test": "node --test",
     "vscode:prepublish": "npm run build",
     "package": "vsce package"
@@ -82,8 +84,12 @@
     "mermaid": "^11"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@vscode/vsce": "^3.9.2",
-    "esbuild": "^0.28.1"
+    "esbuild": "^0.28.1",
+    "eslint": "^10.8.0",
+    "globals": "^17.8.0",
+    "prettier": "^3.9.6"
   },
   "overrides": {
     "encoding-sniffer": "1.0.2"
