@@ -1,5 +1,9 @@
 # Mermaid Preview
 
+[![CI](https://github.com/abreufilho/vscode-mermaid-preview/actions/workflows/ci.yml/badge.svg)](https://github.com/abreufilho/vscode-mermaid-preview/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/abreufilho/vscode-mermaid-preview?color=blue)](https://github.com/abreufilho/vscode-mermaid-preview/releases/latest)
+[![License](https://img.shields.io/github/license/abreufilho/vscode-mermaid-preview?color=blue)](LICENSE)
+
 Preview [Mermaid](https://mermaid.js.org/) diagrams beside their Markdown source,
 with diagram navigation, pan, zoom, fit, and SVG export.
 
