@@ -10,15 +10,22 @@ with diagram navigation, pan, zoom, fit, and SVG export.
 Rendering happens locally. Mermaid ships inside the extension, so previews work
 offline and no document ever leaves the machine.
 
-## Features
+![The extension previewing a flowchart beside its Markdown source, with the diagram toolbar above the canvas](assets/preview.png)
 
-- Detects every fenced `mermaid` block in a document, including CRLF files.
-- Navigates between diagrams with toolbar actions or the arrow keys.
-- Pans by dragging, zooms with the mouse, and fits the diagram with `F`.
-- Exports the current diagram as SVG.
-- Follows the active VS Code light or dark theme.
+## Requirements
 
-## Getting Started
+VS Code 1.80 or later. The extension has no other dependency.
+
+## Installation
+
+Download the `.vsix` from the [latest release](https://github.com/abreufilho/vscode-mermaid-preview/releases/latest)
+and install it:
+
+```bash
+code --install-extension mermaid-preview-<version>.vsix
+```
+
+## Usage
 
 Open a Markdown file containing a Mermaid fence and run **Mermaid: Open
 Preview** from the Command Palette, the editor title bar, the Explorer context
@@ -30,6 +37,18 @@ flowchart LR
   Source --> Preview --> Export
 ```
 ````
+
+Move between diagrams with the arrow keys, drag to pan, scroll to zoom, and
+press `F` to fit the diagram to the panel. The preview refreshes when the
+document is saved.
+
+## Features
+
+- Detects every fenced `mermaid` block in a document, including CRLF files.
+- Navigates between diagrams with toolbar actions or the arrow keys.
+- Pans by dragging, zooms with the mouse, and fits the diagram with `F`.
+- Exports the current diagram as SVG.
+- Follows the active VS Code light or dark theme.
 
 ## Commands
 
@@ -50,13 +69,12 @@ than a CDN.
 - Only fenced code blocks tagged `mermaid` are rendered.
 - SVG export reflects the output of the bundled Mermaid renderer.
 
-## Installation
+## Contributing
 
-Download the `.vsix` from the Releases page and install it:
-
-```bash
-code --install-extension vscode-mermaid-preview-<version>.vsix
-```
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for the local setup and the checks that
+run before a pull request. Participation follows the
+[Code of Conduct](CODE_OF_CONDUCT.md). To report a vulnerability, see the
+[security policy](SECURITY.md).
 
 ## Third-Party
 
