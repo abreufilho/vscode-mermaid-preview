@@ -166,6 +166,39 @@ function showRenderError(message: string): void {
   diagram.append(box);
 }
 
+const DANGEROUS_URL = /^\s*javascript:/i;
+
+/**
+ * Turns the renderer's markup into a node, dropping anything that could carry
+ * script. Mermaid sanitises labels at its strict level; this keeps the preview
+ * from depending on that alone, and avoids an innerHTML sink fed by document
+ * content.
+ */
+function adoptSvg(markup: string): SVGSVGElement | null {
+  const parsed = new DOMParser().parseFromString(markup, 'image/svg+xml');
+  const root = parsed.documentElement;
+  if (!root || root.nodeName === 'parsererror' || root.nodeName.toLowerCase() !== 'svg') {
+    return null;
+  }
+
+  root.querySelectorAll('script, foreignObject script').forEach((node) => node.remove());
+
+  for (const node of [root, ...Array.from(root.querySelectorAll('*'))]) {
+    for (const attribute of Array.from(node.attributes)) {
+      const name = attribute.name.toLowerCase();
+      const isEventHandler = name.startsWith('on');
+      const isScriptUrl =
+        (name === 'href' || name === 'xlink:href') && DANGEROUS_URL.test(attribute.value);
+      if (isEventHandler || isScriptUrl) {
+        node.removeAttribute(attribute.name);
+      }
+    }
+  }
+
+  const adopted = document.importNode(root, true);
+  return adopted instanceof SVGSVGElement ? adopted : null;
+}
+
 async function renderCurrent(): Promise<void> {
   const block = blocks[current];
   if (!block) return;
@@ -185,13 +218,15 @@ async function renderCurrent(): Promise<void> {
       `mermaid-render-${block.id}-${Date.now()}`,
       block.code
     );
-    diagram.innerHTML = svg;
-
-    const svgEl = diagram.querySelector('svg');
-    if (svgEl) {
-      svgEl.style.maxWidth = 'none';
-      svgEl.style.display = 'block';
+    const svgEl = adoptSvg(svg);
+    if (!svgEl) {
+      showRenderError('The renderer returned markup that is not valid SVG.');
+      return;
     }
+
+    diagram.append(svgEl);
+    svgEl.style.maxWidth = 'none';
+    svgEl.style.display = 'block';
 
     requestAnimationFrame(fitToScreen);
   } catch (error) {
