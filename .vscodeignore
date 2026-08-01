@@ -2,10 +2,13 @@
 .editorconfig
 .github/
 .gitignore
+.prettierrc.json
 assets/*.svg
 assets/preview.png
+eslint.config.mjs
 node_modules/
 package-lock.json
+scripts/
 src/
 test/
 *.vsix

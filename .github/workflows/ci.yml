@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci --no-audit --no-fund
+
+      - run: npm run lint
+
+      - run: npm run format:check
+
+      - run: npm test
+
+      # Packaging is part of verification: a manifest or .vscodeignore mistake
+      # only shows up when the VSIX is assembled.
+      - run: npx vsce package --out mermaid-preview.vsix
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: vsix
+          path: mermaid-preview.vsix
