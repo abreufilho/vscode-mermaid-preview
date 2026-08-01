@@ -10,6 +10,9 @@ on:
 
 jobs:
   analyze:
+    # Code scanning is free on public repositories and requires Advanced
+    # Security on private ones, so this skips instead of failing while private.
+    if: github.event.repository.visibility == 'public'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
