@@ -1,0 +1,122 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--vscode-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+  font-size: var(--vscode-font-size, 13px);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Toolbar */
+
+#toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 12px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  gap: 8px;
+}
+
+#nav, #actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#counter {
+  font-size: 0.82em;
+  opacity: 0.65;
+  min-width: 48px;
+  text-align: center;
+}
+
+button {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 3px 9px;
+  font-size: 0.85em;
+  color: inherit;
+  line-height: 1.4;
+  transition: background 0.1s;
+}
+
+button:hover:not(:disabled) { background: var(--hover-bg); }
+button:disabled { opacity: 0.3; cursor: default; }
+
+/* Canvas */
+
+#canvas {
+  flex: 1;
+  overflow: hidden;
+  cursor: grab;
+  display: flex;
+  position: relative;
+}
+
+#canvas:active { cursor: grabbing; }
+
+#viewport {
+  transform-origin: top left;
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+#diagram {
+  padding: 32px;
+}
+
+#diagram svg {
+  display: block;
+}
+
+/* Empty state */
+
+#empty {
+  flex: 1;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.45;
+  font-size: 0.9em;
+}
+
+/* Error */
+
+.error {
+  color: #f85149;
+  padding: 16px 20px;
+  max-width: 600px;
+}
+
+.error pre {
+  margin-top: 8px;
+  font-size: 0.85em;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Light theme */
+
+.theme-light {
+  --border: #d1d5db;
+  --hover-bg: #f3f4f6;
+  background: #ffffff;
+  color: #1f2328;
+}
+
+/* Dark theme */
+
+.theme-dark {
+  --border: #30363d;
+  --hover-bg: #1c2128;
+  background: #0d1117;
+  color: #c9d1d9;
+}
