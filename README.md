@@ -14,10 +14,10 @@ offline and no document ever leaves the machine.
 - Exports the current diagram as SVG.
 - Follows the active VS Code light or dark theme.
 
-## Getting started
+## Getting Started
 
 Open a Markdown file containing a Mermaid fence and run **Mermaid: Open
-Preview** — from the Command Palette, the editor title bar, the Explorer context
+Preview** from the Command Palette, the editor title bar, the Explorer context
 menu, or `Ctrl+Shift+M`.
 
 ````markdown
@@ -53,6 +53,11 @@ Download the `.vsix` from the Releases page and install it:
 ```bash
 code --install-extension vscode-mermaid-preview-<version>.vsix
 ```
+
+## Third-Party
+
+[Mermaid](https://github.com/mermaid-js/mermaid) ships inside the extension
+under the MIT license. Its copyright notice travels in the bundled file.
 
 ## License
 
