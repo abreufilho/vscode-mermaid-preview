@@ -1,0 +1,11 @@
+.claude/
+.editorconfig
+.github/
+.gitignore
+assets/*.svg
+assets/preview.png
+node_modules/
+package-lock.json
+src/
+test/
+*.vsix
