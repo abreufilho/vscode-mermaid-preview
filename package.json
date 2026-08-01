@@ -1,0 +1,91 @@
+{
+  "name": "mermaid-preview",
+  "displayName": "Mermaid Preview",
+  "description": "Local Mermaid preview with diagram navigation, pan, zoom, fit, and SVG export.",
+  "version": "1.0.0",
+  "publisher": "abreufilho",
+  "private": true,
+  "license": "MIT",
+  "author": {
+    "name": "Antonio Abreu Filho",
+    "url": "https://abreufilho.com.br"
+  },
+  "icon": "assets/icon.png",
+  "galleryBanner": {
+    "color": "#312e81",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abreufilho/vscode-mermaid-preview"
+  },
+  "homepage": "https://github.com/abreufilho/vscode-mermaid-preview",
+  "bugs": {
+    "url": "https://github.com/abreufilho/vscode-mermaid-preview/issues"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Visualization"
+  ],
+  "keywords": [
+    "mermaid",
+    "diagram",
+    "preview",
+    "svg",
+    "visualization"
+  ],
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "mermaid.preview",
+        "title": "Mermaid: Open Preview",
+        "icon": "$(open-preview)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "mermaid.preview",
+        "key": "ctrl+shift+m",
+        "when": "editorLangId == markdown"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "mermaid.preview",
+          "when": "editorLangId == markdown",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "mermaid.preview",
+          "when": "resourceExtname == .md",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "build": "esbuild src/extension.js --bundle --platform=node --external:vscode --outfile=extension.js --legal-comments=eof",
+    "test": "node --test",
+    "vscode:prepublish": "npm run build",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "mermaid": "^11"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.28.1"
+  },
+  "overrides": {
+    "encoding-sniffer": "1.0.2"
+  }
+}
