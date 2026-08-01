@@ -1,6 +1,20 @@
+import type { HostMessage, MermaidBlock, WebviewMessage } from '../types';
+
+interface MermaidApi {
+  initialize(config: { startOnLoad: boolean; theme: string; securityLevel: string }): void;
+  render(id: string, code: string): Promise<{ svg: string }>;
+}
+
+interface VsCodeApi {
+  postMessage(message: WebviewMessage): void;
+}
+
+declare const mermaid: MermaidApi;
+declare function acquireVsCodeApi(): VsCodeApi;
+
 const vscode = acquireVsCodeApi();
 
-let blocks = [];
+let blocks: MermaidBlock[] = [];
 let current = 0;
 let scale = 1;
 let tx = 0;
@@ -9,36 +23,44 @@ let dragging = false;
 let lastX = 0;
 let lastY = 0;
 
-const canvas = document.getElementById('canvas');
-const viewportEl = document.getElementById('viewport');
-const diagram = document.getElementById('diagram');
-const counter = document.getElementById('counter');
-const empty = document.getElementById('empty');
-const toolbarEl = document.getElementById('toolbar');
-const btnPrev = document.getElementById('btn-prev');
-const btnNext = document.getElementById('btn-next');
+function element<T extends HTMLElement>(id: string): T {
+  const found = document.getElementById(id);
+  if (!found) {
+    throw new Error(`missing element: ${id}`);
+  }
+  return found as T;
+}
 
-function applyTransform() {
+const canvas = element('canvas');
+const viewportEl = element('viewport');
+const diagram = element('diagram');
+const counter = element('counter');
+const empty = element('empty');
+const toolbarEl = element('toolbar');
+const btnPrev = element<HTMLButtonElement>('btn-prev');
+const btnNext = element<HTMLButtonElement>('btn-next');
+
+function applyTransform(): void {
   viewportEl.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
 }
 
-function fitToScreen() {
+function fitToScreen(): void {
   const svg = diagram.querySelector('svg');
   if (!svg) return;
 
   const cw = canvas.clientWidth;
   const ch = canvas.clientHeight;
 
-  let sw;
-  let sh;
+  let sw: number;
+  let sh: number;
   const viewBox = svg.getAttribute('viewBox');
   if (viewBox) {
     const parts = viewBox.trim().split(/[\s,]+/);
-    sw = parseFloat(parts[2]);
-    sh = parseFloat(parts[3]);
+    sw = Number.parseFloat(parts[2] ?? '');
+    sh = Number.parseFloat(parts[3] ?? '');
   } else {
-    sw = parseFloat(svg.getAttribute('width')) || svg.scrollWidth;
-    sh = parseFloat(svg.getAttribute('height')) || svg.scrollHeight;
+    sw = Number.parseFloat(svg.getAttribute('width') ?? '') || svg.scrollWidth;
+    sh = Number.parseFloat(svg.getAttribute('height') ?? '') || svg.scrollHeight;
   }
 
   if (!sw || !sh) return;
@@ -94,20 +116,20 @@ window.addEventListener('mouseup', () => {
 btnPrev.addEventListener('click', () => {
   if (current > 0) {
     current -= 1;
-    renderCurrent();
+    void renderCurrent();
   }
 });
 
 btnNext.addEventListener('click', () => {
   if (current < blocks.length - 1) {
     current += 1;
-    renderCurrent();
+    void renderCurrent();
   }
 });
 
-document.getElementById('btn-fit').addEventListener('click', fitToScreen);
+element('btn-fit').addEventListener('click', fitToScreen);
 
-document.getElementById('btn-export').addEventListener('click', () => {
+element('btn-export').addEventListener('click', () => {
   const svg = diagram.querySelector('svg');
   if (!svg) return;
 
@@ -126,7 +148,7 @@ window.addEventListener('keydown', (event) => {
   if (event.key === 'f' || event.key === 'F') fitToScreen();
 });
 
-function showRenderError(message) {
+function showRenderError(message: string): void {
   diagram.replaceChildren();
 
   const box = document.createElement('div');
@@ -144,8 +166,9 @@ function showRenderError(message) {
   diagram.append(box);
 }
 
-async function renderCurrent() {
-  if (!blocks.length) return;
+async function renderCurrent(): Promise<void> {
+  const block = blocks[current];
+  if (!block) return;
 
   diagram.replaceChildren();
   scale = 1;
@@ -157,11 +180,11 @@ async function renderCurrent() {
   btnPrev.disabled = current === 0;
   btnNext.disabled = current === blocks.length - 1;
 
-  const block = blocks[current];
-  const id = `mermaid-render-${block.id}-${Date.now()}`;
-
   try {
-    const { svg } = await mermaid.render(id, block.code);
+    const { svg } = await mermaid.render(
+      `mermaid-render-${block.id}-${Date.now()}`,
+      block.code
+    );
     diagram.innerHTML = svg;
 
     const svgEl = diagram.querySelector('svg');
@@ -172,15 +195,15 @@ async function renderCurrent() {
 
     requestAnimationFrame(fitToScreen);
   } catch (error) {
-    showRenderError(error && error.message ? error.message : String(error));
+    showRenderError(error instanceof Error ? error.message : String(error));
   }
 }
 
-window.addEventListener('message', async (event) => {
+window.addEventListener('message', async (event: MessageEvent<HostMessage>) => {
   const message = event.data;
   if (!message || message.type !== 'render') return;
 
-  blocks = Array.isArray(message.blocks) ? message.blocks : [];
+  blocks = message.blocks;
   current = 0;
 
   mermaid.initialize({
@@ -191,7 +214,7 @@ window.addEventListener('message', async (event) => {
     securityLevel: 'strict',
   });
 
-  if (!blocks.length) {
+  if (blocks.length === 0) {
     empty.style.display = 'flex';
     toolbarEl.style.display = 'none';
     canvas.style.display = 'none';

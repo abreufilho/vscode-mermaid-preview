@@ -1,6 +1,6 @@
-const assert = require('node:assert/strict');
-const test = require('node:test');
-const { extractMermaidBlocks } = require('../src/lib/markdown');
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { extractMermaidBlocks } from '../src/lib/markdown';
 
 test('extracts multiple Mermaid fences with stable ids', () => {
   const blocks = extractMermaidBlocks(
@@ -31,7 +31,7 @@ test('extracts an indented fence and keeps its closing marker aligned', () => {
   const blocks = extractMermaidBlocks('- item\n\n  ```mermaid\n  graph TD\n  ```\n');
 
   assert.equal(blocks.length, 1);
-  assert.match(blocks[0].code, /graph TD/);
+  assert.match(blocks[0]!.code, /graph TD/);
 });
 
 test('skips fences with no diagram content', () => {

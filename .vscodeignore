@@ -7,8 +7,10 @@ assets/*.svg
 assets/preview.png
 eslint.config.mjs
 node_modules/
+out/
 package-lock.json
 scripts/
 src/
 test/
+tsconfig.json
 *.vsix

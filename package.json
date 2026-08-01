@@ -74,9 +74,11 @@
   },
   "scripts": {
     "build": "node scripts/build.mjs",
+    "compile": "tsc",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "format:check": "prettier --check \"src/**/*.js\" \"scripts/*.mjs\" \"*.json\"",
-    "test": "node --test",
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/*.mjs\" \"*.json\"",
+    "test": "npm run compile && node --test out/test/*.test.js",
     "vscode:prepublish": "npm run build",
     "package": "vsce package"
   },
@@ -85,11 +87,15 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/node": "^26.1.2",
+    "@types/vscode": "1.80",
     "@vscode/vsce": "^3.9.2",
     "esbuild": "^0.28.1",
     "eslint": "^10.8.0",
     "globals": "^17.8.0",
-    "prettier": "^3.9.6"
+    "prettier": "^3.9.6",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.65.0"
   },
   "overrides": {
     "encoding-sniffer": "1.0.2"

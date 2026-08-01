@@ -15,20 +15,32 @@ const MERMAID_BUNDLE = resolve(root, 'node_modules/mermaid/dist/mermaid.min.js')
 await rm(dist, { recursive: true, force: true });
 await rm(resolve(root, 'extension.js'), { force: true });
 
+// Host: runs in the extension process, with vscode provided by the editor.
 await build({
-  entryPoints: [resolve(root, 'src/extension.js')],
+  entryPoints: [resolve(root, 'src/extension.ts')],
   outfile: resolve(root, 'extension.js'),
   bundle: true,
   platform: 'node',
   target: 'node18',
+  format: 'cjs',
   external: ['vscode'],
   // Attribution for everything pulled into the bundle, generated rather than
   // maintained by hand.
   legalComments: 'eof',
 });
 
-await mkdir(resolve(dist, 'webview'), { recursive: true });
-await cp(resolve(root, 'src/webview'), resolve(dist, 'webview'), { recursive: true });
+// Webview: runs in the browser context, loaded by a plain script tag.
+await build({
+  entryPoints: [resolve(root, 'src/webview/preview.ts')],
+  outfile: resolve(dist, 'webview/preview.js'),
+  bundle: true,
+  platform: 'browser',
+  target: 'es2022',
+  format: 'iife',
+  legalComments: 'eof',
+});
+
+await cp(resolve(root, 'src/webview/styles.css'), resolve(dist, 'webview/styles.css'));
 
 await mkdir(resolve(dist, 'vendor'), { recursive: true });
 await cp(MERMAID_BUNDLE, resolve(dist, 'vendor/mermaid.min.js'));

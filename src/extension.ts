@@ -1,21 +1,31 @@
-const crypto = require('node:crypto');
-const path = require('node:path');
-const vscode = require('vscode');
-const { extractMermaidBlocks } = require('./lib/markdown');
+import * as crypto from 'node:crypto';
+import * as path from 'node:path';
+import * as vscode from 'vscode';
+import { extractMermaidBlocks } from './lib/markdown';
+import type { Theme, WebviewMessage } from './types';
 
-const panels = new Map();
+const panels = new Map<string, vscode.WebviewPanel>();
 
-function getNonce() {
+function getNonce(): string {
   return crypto.randomBytes(16).toString('base64');
 }
 
-function getTheme(kind) {
+function getTheme(kind: vscode.ColorThemeKind): Theme {
+  // HighContrast is the dark high-contrast theme; the light one is
+  // HighContrastLight. There is no HighContrastDark member.
   const dark =
-    kind === vscode.ColorThemeKind.Dark || kind === vscode.ColorThemeKind.HighContrastDark;
+    kind === vscode.ColorThemeKind.Dark || kind === vscode.ColorThemeKind.HighContrast;
   return dark ? 'dark' : 'light';
 }
 
-function getWebviewContent(webview, nonce, scriptUri, styleUri, mermaidUri, theme) {
+function getWebviewContent(
+  webview: vscode.Webview,
+  nonce: string,
+  scriptUri: vscode.Uri,
+  styleUri: vscode.Uri,
+  mermaidUri: vscode.Uri,
+  theme: Theme
+): string {
   // Scripts run by nonce only. Inline styles stay allowed because Mermaid sets
   // them on the SVG it generates.
   const csp = [
@@ -32,7 +42,7 @@ function getWebviewContent(webview, nonce, scriptUri, styleUri, mermaidUri, them
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="${csp};">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="${styleUri}">
+  <link rel="stylesheet" href="${styleUri.toString()}">
 </head>
 <body class="theme-${theme}">
   <div id="toolbar">
@@ -52,13 +62,13 @@ function getWebviewContent(webview, nonce, scriptUri, styleUri, mermaidUri, them
     </div>
   </div>
   <div id="empty">No Mermaid diagrams found in this file.</div>
-  <script nonce="${nonce}" src="${mermaidUri}"></script>
-  <script nonce="${nonce}" src="${scriptUri}"></script>
+  <script nonce="${nonce}" src="${mermaidUri.toString()}"></script>
+  <script nonce="${nonce}" src="${scriptUri.toString()}"></script>
 </body>
 </html>`;
 }
 
-function openPreview(context) {
+function openPreview(context: vscode.ExtensionContext): void {
   const editor = vscode.window.activeTextEditor;
   if (!editor) return;
 
@@ -84,7 +94,7 @@ function openPreview(context) {
 
   panels.set(key, panel);
 
-  const distUri = (...segments) =>
+  const distUri = (...segments: string[]): vscode.Uri =>
     panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'dist', ...segments));
 
   panel.webview.html = getWebviewContent(
@@ -96,16 +106,16 @@ function openPreview(context) {
     getTheme(vscode.window.activeColorTheme.kind)
   );
 
-  const sendBlocks = (source) => {
-    panel.webview.postMessage({
+  const sendBlocks = (source: vscode.TextDocument): void => {
+    void panel.webview.postMessage({
       type: 'render',
       blocks: extractMermaidBlocks(source.getText()),
       theme: getTheme(vscode.window.activeColorTheme.kind),
     });
   };
 
-  const subscriptions = [
-    panel.webview.onDidReceiveMessage((message) => {
+  const subscriptions: vscode.Disposable[] = [
+    panel.webview.onDidReceiveMessage((message: WebviewMessage) => {
       if (message.type === 'ready') sendBlocks(document);
     }),
     vscode.workspace.onDidSaveTextDocument((saved) => {
@@ -120,15 +130,13 @@ function openPreview(context) {
   });
 }
 
-function activate(context) {
+export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand('mermaid.preview', () => openPreview(context))
   );
 }
 
-function deactivate() {
+export function deactivate(): void {
   panels.forEach((panel) => panel.dispose());
   panels.clear();
 }
-
-module.exports = { activate, deactivate };
