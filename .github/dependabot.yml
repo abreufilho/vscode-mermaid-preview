@@ -15,6 +15,10 @@ updates:
       # the extension would fail there at runtime. Raise both together or
       # neither.
       - dependency-name: '@types/vscode'
+      # typescript-eslint 8 does not accept TypeScript 7 as a peer, so raising
+      # the compiler on its own breaks npm ci. Majors move when both can move.
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
 
   # Actions are pinned to commit SHAs, which never update on their own.
   - package-ecosystem: github-actions
