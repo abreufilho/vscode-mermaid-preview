@@ -14,7 +14,7 @@ offline and no document ever leaves the machine.
 
 ## Requirements
 
-VS Code 1.80 or later. The extension has no other dependency.
+VS Code 1.125 or later. The extension has no other dependency.
 
 ## Installation
 
