@@ -87,11 +87,11 @@
     "mermaid": "^11"
   },
   "devDependencies": {
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.6.1",
     "@types/vscode": "1.125",
-    "@vscode/vsce": "^3.9.2",
-    "esbuild": "^0.28.1",
-    "oxlint": "^1.76.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "oxlint": "^1.83.0",
     "oxlint-tsgolint": "^7.0.2001",
     "prettier": "^3.9.6",
     "typescript": "^7.0.2"
