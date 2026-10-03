@@ -83,7 +83,7 @@
     "package": "vsce package"
   },
   "dependencies": {
-    "dompurify": "^3.4.12",
+    "dompurify": "^3.4.16",
     "mermaid": "^11"
   },
   "devDependencies": {
