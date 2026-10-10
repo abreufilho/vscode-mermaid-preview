@@ -84,7 +84,7 @@
   },
   "dependencies": {
     "dompurify": "^3.4.12",
-    "mermaid": "^11"
+    "mermaid": "^12"
   },
   "devDependencies": {
     "@types/node": "^26.1.2",
